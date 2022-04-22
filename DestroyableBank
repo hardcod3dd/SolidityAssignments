@@ -1,0 +1,43 @@
+
+// File: contracts/Ownable.sol
+
+pragma solidity 0.8.7;
+
+contract Ownable {
+    address payable public owner;
+
+    constructor () {
+        owner = payable(msg.sender);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+}
+// File: contracts/Destroyable.sol
+
+pragma solidity 0.8.7;
+
+
+contract Destroyable is Ownable {
+    function destroy() public onlyOwner {
+        owner.transfer(address(this).balance);
+        selfdestruct(owner);
+    }
+}
+// File: contracts/Bank.sol
+
+pragma solidity 0.8.7;
+
+
+contract Bank is Ownable, Destroyable {
+
+    receive() external payable {
+
+    }
+
+    function balance() public view returns (uint256){
+    return payable(address(this)).balance;
+  }
+}
